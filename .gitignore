@@ -1,0 +1,65 @@
+############################
+# Spring Boot / Maven
+############################
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+.mvn/wrapper/maven-wrapper.jar
+
+*.log
+
+############################
+# Terraform
+############################
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.lock.hcl
+
+############################
+# IntelliJ
+############################
+.idea/
+*.iws
+*.iml
+*.ipr
+
+############################
+# VS Code
+############################
+.vscode/
+
+############################
+# STS
+############################
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+############################
+# NetBeans
+############################
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+############################
+# OS Files
+############################
+.DS_Store
+Thumbs.db

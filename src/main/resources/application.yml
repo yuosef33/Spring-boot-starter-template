@@ -1,0 +1,38 @@
+spring:
+  application:
+      name: CloudExaminationPlatform
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+
+
+  jpa:
+    show-sql: ${JPA_SHOWSQL:true}
+    properties:
+      hibernate:
+         format_sql: ${JPA_FORMATSQL:true}
+    hibernate:
+      ddl-auto: create-drop
+  sql:
+    init:
+      mode: always
+logging:
+  pattern:
+    console: ${LOGPATTERN_CONSOLE:%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %msg%n}
+  level:
+    org:
+      springframework:
+        security: ${SPRING_SECURITY_LOG_LEVEL:TRACE}
+
+application:
+  security:
+    jwt:
+      secret-key: jkdodosoa]of32['cp@10238321232131#@3321@#@#!@$#!2
+      expiration: 1d
+

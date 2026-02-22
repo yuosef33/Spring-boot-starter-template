@@ -27,14 +27,17 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             WebRequest request) {
 
         Map<String, String> validationErrors = new HashMap<>();
-
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 validationErrors.put(error.getField(), error.getDefaultMessage())
         );
 
-        return new ResponseEntity<>(validationErrors, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                "status", 400,
+                "message", "Validation failed",
+                "errors", validationErrors,
+                "timestamp", LocalDateTime.now().toString()
+        ));
     }
-
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleGlobalException(Exception exception,

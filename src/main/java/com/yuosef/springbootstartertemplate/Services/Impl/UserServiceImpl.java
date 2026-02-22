@@ -46,9 +46,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserAccountInfo userAccInfo) throws SystemException {
-        Optional<User> user = userDao.findUserByEmail(userAccInfo.getUser_email());
+        Optional<User> user = userDao.findUserByEmail(userAccInfo.name());
         if (user.isPresent())
-            throw new SystemException("this email " + userAccInfo.getUser_email() + " is already in use");
+            throw new SystemException("this email " + userAccInfo.name() + " is already in use");
         // client not exist
         Authority userRole = authorityRepository.findByUserRole("USER")
                 .orElseThrow(() -> new IllegalStateException("Role USER not found"));
@@ -56,10 +56,10 @@ public class UserServiceImpl implements UserService {
         List<Authority> auths = List.of(userRole);
 
         User user2 = User.builder()
-                .name(userAccInfo.getUser_name())
-                .email(userAccInfo.getUser_email())
-                .mobileNumber(userAccInfo.getUser_phoneNumber())
-                .pwd(passwordEncoder.encode(userAccInfo.getUser_password()))
+                .name(userAccInfo.name())
+                .email(userAccInfo.email())
+                .mobileNumber(userAccInfo.phoneNumber())
+                .pwd(passwordEncoder.encode(userAccInfo.password()))
                 .createDt(new Date(System.currentTimeMillis()))
                 .authorities(auths).build();
         return Usermapper.toDto(userDao.save(user2));

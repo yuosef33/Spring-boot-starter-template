@@ -52,8 +52,9 @@ public class SecurityConfig {
                 }))
                 .authorizeHttpRequests(
                         (request) -> request
-                                .requestMatchers(HttpMethod.POST,"/api/**").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/api/**").hasRole("USER")
+                                .requestMatchers(HttpMethod.POST,"/auth/**").permitAll()
+                                .requestMatchers(HttpMethod.POST,"/business/logout").authenticated()
+                                .requestMatchers(HttpMethod.GET,"/business/hello").hasRole("USER")
                                 .requestMatchers("/h2-console/**").permitAll()
 
 

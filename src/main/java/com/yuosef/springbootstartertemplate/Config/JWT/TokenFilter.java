@@ -28,10 +28,11 @@ public class TokenFilter extends OncePerRequestFilter {
     private final TokenHandler tokenHandler;
     private final UserService userService;
     private static final List<String> PUBLIC_PATHS = List.of(
-            "/api/signup",
-            "/api/Login",
-            "/api/createUser",
-            "/api/swagger-ui",
+            "/auth/signup",
+            "/auth/Login",
+            "/auth/createUser",
+            "/auth/refresh-token",
+            "/swagger-ui",
             "/h2-console",
             "ForgetPassword"
     );

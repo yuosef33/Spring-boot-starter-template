@@ -1,5 +1,6 @@
 package com.yuosef.springbootstartertemplate.Controller;
 
+import com.yuosef.springbootstartertemplate.Models.Dtos.ApiResponse;
 import com.yuosef.springbootstartertemplate.Models.User;
 import com.yuosef.springbootstartertemplate.Services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +21,12 @@ public class BusinessController {
     }
 
     @GetMapping("/hello") /// this path is Authenticated
-    public String hello() {
-        return "Hello, World!";
+    public ResponseEntity<ApiResponse<String>> hello() {
+        return ResponseEntity.ok(ApiResponse.ok("Hello, World!"));
     }
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@AuthenticationPrincipal User user) {
+    public ResponseEntity<ApiResponse<Void>> logout(@AuthenticationPrincipal User user) {
         userService.logout(user);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.ok("Logged out successfully"));
     }
 }

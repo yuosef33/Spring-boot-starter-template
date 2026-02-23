@@ -46,10 +46,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserAccountInfo userAccInfo) throws SystemException {
-        Optional<User> user = userDao.findUserByEmail(userAccInfo.name());
-        if (user.isPresent())
-            throw new SystemException("this email " + userAccInfo.name() + " is already in use");
-        // client not exist
+        Optional<User> user = userDao.findUserByEmail(userAccInfo.email());
+        if (user.isPresent()) {
+            throw new SystemException("this email " + userAccInfo.email() + " is already in use");
+        }
+            // client not exist
         Authority userRole = authorityRepository.findByUserRole("USER")
                 .orElseThrow(() -> new IllegalStateException("Role USER not found"));
 

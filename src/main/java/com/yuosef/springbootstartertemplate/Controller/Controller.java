@@ -20,19 +20,20 @@ public class Controller {
     }
 
     @PostMapping("/createUser")
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserAccountInfo userAccountInfo) throws SystemException {
+    public ResponseEntity<ApiResponse<UserDto>> createUser(@Valid @RequestBody UserAccountInfo userAccountInfo) throws SystemException {
          UserDto user= userService.createUser(userAccountInfo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok("User Created successfully",user));
     }
     @PostMapping("/Login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginInfo loginInfo){
-        return ResponseEntity.ok(userService.login(loginInfo));
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginInfo loginInfo){
+        return ResponseEntity.ok(ApiResponse.ok("Login successful",userService.login(loginInfo)));
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshTokenRequest request) {
-        return ResponseEntity.ok(userService.refreshToken(request));
+    public ResponseEntity<ApiResponse<AuthResponse>> refresh(@RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(ApiResponse.ok("Token Refreshed",userService.refreshToken(request)));
     }
+
 
 
 }

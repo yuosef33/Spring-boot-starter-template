@@ -13,7 +13,8 @@ public class Usermapper {
             user.getPwd(),
             user.getCreatedAt(),
             user.getUpdatedAt(),
-            user.getRoles());
+            user.getRoles(),
+            user.getAuthProvider());
    };
     public static User toEntity(UserDto userDto){
        return new User(userDto.getId(),
@@ -21,7 +22,8 @@ public class Usermapper {
                userDto.getEmail(),
                userDto.getMobileNumber(),
                userDto.getPwd(),
-               userDto.getAuthorities());
+               userDto.getAuthorities(),
+               userDto.getAuthProvider());
    };
 
 }

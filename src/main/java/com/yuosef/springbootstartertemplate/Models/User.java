@@ -1,6 +1,7 @@
 package com.yuosef.springbootstartertemplate.Models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yuosef.springbootstartertemplate.Models.Dtos.AuthProvider;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,6 +43,10 @@ public class User extends AuditingBase implements UserDetails  {
             inverseJoinColumns = @JoinColumn(name = "authoritie_id")
     )
     List<Authority> authorities;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AuthProvider authProvider = AuthProvider.LOCAL;
 
 
 

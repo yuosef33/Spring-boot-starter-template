@@ -43,27 +43,27 @@ public class RateLimitFilter extends OncePerRequestFilter {
              FilterChain filterChain
     ) throws ServletException, IOException {
 
+
         String ip = getClientIP(request);
         String path = request.getServletPath();
 
-        // get or create bucket for this IP
-        Bucket bucket = buckets.computeIfAbsent(ip, k -> createBucket(path));
+        String bucketKey = ip + ":" + (isAuthPath(path) ? "auth" : "global");
 
-        // try to consume 1 token
+        Bucket bucket = buckets.computeIfAbsent(bucketKey, k -> createBucket(path));
+
         if (bucket.tryConsume(1)) {
             filterChain.doFilter(request, response);
         } else {
-            // no tokens left then reject request
             log.warn("Rate limit exceeded for IP: {} on path: {}", ip, path);
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.getWriter().write("""
-                    {
-                        "success": false,
-                        "message": "Too many requests, please slow down and try again later.",
-                        "data": null
-                    }
-                    """);
+                {
+                    "success": false,
+                    "message": "Too many requests, please slow down and try again later.",
+                    "data": null
+                }
+                """);
         }
     }
 

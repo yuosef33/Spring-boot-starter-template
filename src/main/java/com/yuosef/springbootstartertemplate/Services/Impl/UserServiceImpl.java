@@ -34,9 +34,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AuthResponse login(LoginInfo loginInfo) {
-         authenticationManager.authenticate(
+        User user = userDao.findUserByEmail(loginInfo.email()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (user.getAuthProvider() == AuthProvider.GOOGLE) {
+            throw new IllegalArgumentException(
+                    "This account uses Google login. Please sign in with Google."
+            );
+        }
+        authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginInfo.email(), loginInfo.password()));
-        User user = userDao.findUserByEmail(loginInfo.email()).orElseThrow();
         String accessToken = tokenHandler.createToken(user);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
         return new AuthResponse(accessToken,refreshToken.getToken());

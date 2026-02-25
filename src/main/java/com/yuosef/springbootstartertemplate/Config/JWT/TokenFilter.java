@@ -32,13 +32,17 @@ public class TokenFilter extends OncePerRequestFilter {
             "/auth/signup",
             "/auth/Login",
             "/auth/createUser",
-            "/auth/refresh-token"
+            "/auth/refresh-token",
+            "/auth/oauth2/callback"
     );
 
     private static final List<String> PREFIX_PUBLIC_PATHS = List.of(
             "/swagger-ui",
             "/v3/api-docs",
-            "/h2-console"
+            "/h2-console",
+            "/actuator",
+            "/oauth2",        // ← add this
+            "/login/oauth2"
     );
 
     public TokenFilter(TokenHandler tokenHandler, UserService userService) {

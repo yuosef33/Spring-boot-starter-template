@@ -3,6 +3,8 @@ package com.yuosef.springbootstartertemplate.Models.Dtos;
 
 import com.yuosef.springbootstartertemplate.Models.Authority;
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,4 +36,7 @@ public class UserDto {
     private LocalDateTime updatedAt;
 
     List<Authority> authorities;
+
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
 }

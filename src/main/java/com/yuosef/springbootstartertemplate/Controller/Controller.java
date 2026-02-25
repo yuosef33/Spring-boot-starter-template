@@ -38,6 +38,12 @@ public class Controller {
         return ResponseEntity.ok(ApiResponse.ok("Token Refreshed",userService.refreshToken(request)));
     }
 
-
+    @GetMapping("/oauth2/callback")
+    public ResponseEntity<ApiResponse<AuthResponse>> callback(
+            @RequestParam String token,
+            @RequestParam String refreshToken) {
+        return ResponseEntity.ok(ApiResponse.ok("Google login successful",
+                new AuthResponse(token, refreshToken)));
+    }
 
 }

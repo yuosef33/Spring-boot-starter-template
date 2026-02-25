@@ -3,39 +3,14 @@ spring:
       name: SpringbootStarterTemplate
   profiles:
     active: dev        # active profile is "dev" switching to prod needs to handle prod.yml first
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: ""
-  h2:
-    console:
+
+management:
+  info:
+    env:
       enabled: true
 
-  jpa:
-    show-sql: ${JPA_SHOWSQL:true}
-    properties:
-      hibernate:
-         format_sql: ${JPA_FORMATSQL:true}
-    hibernate:
-      ddl-auto: create-drop
-  sql:
-    init:
-      mode: always
-logging:
-  pattern:
-    console: ${LOGPATTERN_CONSOLE:%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %msg%n}
-
-
-application:
-  security:
-    jwt:
-      secret-key:  ${JWT_SECRET_KEY}
-      expiration: 1d
-      refresh-expiration: 604800000 # refresh token — 7 days
-
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
+info:
+  app:
+    name: Spring Boot Starter Template
+    description: Production-ready starter template
+    version: 1.0.0

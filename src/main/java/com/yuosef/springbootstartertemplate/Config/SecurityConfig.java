@@ -4,6 +4,7 @@ package com.yuosef.springbootstartertemplate.Config;
 import com.yuosef.springbootstartertemplate.Config.Bucket4J.RateLimitFilter;
 import com.yuosef.springbootstartertemplate.Config.JWT.TokenFilter;
 import com.yuosef.springbootstartertemplate.Daos.UserDao;
+import com.yuosef.springbootstartertemplate.Services.Impl.OAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -37,7 +38,7 @@ public class SecurityConfig {
     private final UserDao userRepository;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, TokenFilter tokenFilter, RateLimitFilter rateLimitFilter) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http, TokenFilter tokenFilter, RateLimitFilter rateLimitFilter, OAuth2SuccessHandler oAuth2SuccessHandler, OAuth2UserService oAuth2UserService) throws Exception{
 
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(cors -> cors.configurationSource(request -> {
@@ -57,14 +58,20 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/swagger-ui/**",
                                         "/swagger-ui.html",
-                                        "/v3/api-docs/**").permitAll()
+                                        "/v3/api-docs/**",
+                                        "/actuator/**",
+                                        "/oauth2/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/business/logout").authenticated()
                                 .requestMatchers(HttpMethod.GET, "/business/hello").hasRole("USER")
-                                .anyRequest().authenticated()
-
-                ).headers(headers -> headers
-                        .frameOptions(frame -> frame.disable())
-                ).csrf(csrf -> csrf.disable());
+                                .anyRequest().authenticated())
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.disable()))
+                .csrf(csrf -> csrf.disable())
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo ->
+                                userInfo.userService(oAuth2UserService))
+                        .successHandler(oAuth2SuccessHandler)
+                );
         http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(rateLimitFilter, TokenFilter.class);
         return http.build();

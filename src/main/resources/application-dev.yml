@@ -1,6 +1,7 @@
 spring:
   application:
       name: SpringbootStarterTemplate
+
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
@@ -20,6 +21,18 @@ spring:
   sql:
     init:
       mode: always
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope:
+              - email
+              - profile
 logging:
   pattern:
     console: ${LOGPATTERN_CONSOLE:%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %msg%n}
@@ -31,9 +44,21 @@ application:
       secret-key:  ${JWT_SECRET_KEY}
       expiration: 1d
       refresh-expiration: 604800000 # refresh token — 7 days
+  oauth2:
+    redirect-uri: ${OAUTH2_REDIRECT_URI:http://localhost:8080/auth/oauth2/callback}
 
 springdoc:
   api-docs:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  endpoint:
+    health:
+      show-details: always

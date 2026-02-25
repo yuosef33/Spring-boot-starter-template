@@ -25,10 +25,11 @@ public class RefreshTokenServiceImpl {
     public RefreshToken createRefreshToken(User user) {
         // delete old one first so only one refresh token per user exists
         refreshTokenRepository.deleteByUser(user);
+        refreshTokenRepository.flush();
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
-                .token(UUID.randomUUID().toString()) // random unique string
+                .token(UUID.randomUUID().toString())
                 .expiryDate(Instant.now().plusMillis(refreshExpiration))
                 .build();
 
@@ -48,7 +49,7 @@ public class RefreshTokenServiceImpl {
         return refreshToken;
     }
 
-    // Called on logout
+    // used on logout
     @Transactional
     public void deleteByUser(User user) {
         refreshTokenRepository.deleteByUser(user);

@@ -27,14 +27,18 @@ public class TokenFilter extends OncePerRequestFilter {
 
     private final TokenHandler tokenHandler;
     private final UserService userService;
-    private static final List<String> PUBLIC_PATHS = List.of(
+
+    private static final List<String> EXACT_PUBLIC_PATHS = List.of(
             "/auth/signup",
             "/auth/Login",
             "/auth/createUser",
-            "/auth/refresh-token",
+            "/auth/refresh-token"
+    );
+
+    private static final List<String> PREFIX_PUBLIC_PATHS = List.of(
             "/swagger-ui",
-            "/h2-console",
-            "ForgetPassword"
+            "/v3/api-docs",
+            "/h2-console"
     );
 
     public TokenFilter(TokenHandler tokenHandler, UserService userService) {
@@ -44,7 +48,9 @@ public class TokenFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return PUBLIC_PATHS.contains(request.getServletPath());
+        String path = request.getServletPath();
+        return EXACT_PUBLIC_PATHS.contains(path) ||
+                PREFIX_PUBLIC_PATHS.stream().anyMatch(path::startsWith);
     }
 
     @Override

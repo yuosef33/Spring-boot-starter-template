@@ -25,7 +25,6 @@ public class RefreshToken {
     @Column(nullable = false)
     private Instant expiryDate;
 
-    // which user this refresh token belongs to
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;

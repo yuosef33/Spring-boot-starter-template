@@ -1,6 +1,7 @@
 package com.yuosef.springbootstartertemplate.Config;
 
 
+import com.yuosef.springbootstartertemplate.Config.Bucket4J.RateLimitFilter;
 import com.yuosef.springbootstartertemplate.Config.JWT.TokenFilter;
 import com.yuosef.springbootstartertemplate.Daos.UserDao;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,45 +35,47 @@ public class SecurityConfig {
     private final UserDao userRepository;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, TokenFilter tokenFilter) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http, TokenFilter tokenFilter, RateLimitFilter rateLimitFilter) throws Exception{
 
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(cors -> cors.configurationSource(new CorsConfigurationSource() {
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                        CorsConfiguration corsConfiguration = new CorsConfiguration();
-                        corsConfiguration.setAllowedOriginPatterns(List.of("*"));
-                        corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
-                        corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
-                        corsConfiguration.setExposedHeaders(Arrays.asList("Authorization"));
-                        corsConfiguration.setAllowCredentials(true);
-                        corsConfiguration.setMaxAge(3600L);
-                        return corsConfiguration;
-                    }
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration corsConfiguration = new CorsConfiguration();
+                    corsConfiguration.setAllowedOriginPatterns(List.of("*"));
+                    corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
+                    corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
+                    corsConfiguration.setExposedHeaders(Arrays.asList("Authorization"));
+                    corsConfiguration.setAllowCredentials(true);
+                    corsConfiguration.setMaxAge(3600L);
+                    return corsConfiguration;
                 }))
                 .authorizeHttpRequests(
-                        (request) -> request
-                                .requestMatchers(HttpMethod.POST,"/auth/**").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/business/logout").authenticated()
-                                .requestMatchers(HttpMethod.GET,"/business/hello").hasRole("USER")
+                        (request)  -> request
+                                .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/h2-console/**").permitAll()
-
+                                .requestMatchers(
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html",
+                                        "/v3/api-docs/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/business/logout").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/business/hello").hasRole("USER")
+                                .anyRequest().authenticated()
 
                 ).headers(headers -> headers
-                        .frameOptions(frame -> frame.disable())  // ← 2. لأن H2 console بيستخدم iframes
+                        .frameOptions(frame -> frame.disable())
                 ).csrf(csrf -> csrf.disable());
         http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(rateLimitFilter, TokenFilter.class);
         return http.build();
     }
 
-    // Loads the user from DB by email — Spring Security calls this automatically
+    // Loads the user from database by email Spring Security calls this automatically
     @Bean
     public UserDetailsService userDetailsService() {
         return email -> userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
     }
 
-    // Validates credentials during login (email + password)
+    // Validates credentials during login (email and password)
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -81,7 +84,6 @@ public class SecurityConfig {
         return provider;
     }
 
-    // Used in AuthService to trigger the login flow
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
             throws Exception {

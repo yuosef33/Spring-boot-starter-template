@@ -3,6 +3,7 @@ package com.yuosef.springbootstartertemplate.Controller;
 import com.yuosef.springbootstartertemplate.Models.Dtos.ApiResponse;
 import com.yuosef.springbootstartertemplate.Models.User;
 import com.yuosef.springbootstartertemplate.Services.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/business")
+@Tag(name = "BusinessController", description = "Your business endpoints here")
 public class BusinessController {
 
     private final UserService userService;

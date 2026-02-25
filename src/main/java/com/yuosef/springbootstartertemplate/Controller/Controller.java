@@ -2,6 +2,8 @@ package com.yuosef.springbootstartertemplate.Controller;
 
 import com.yuosef.springbootstartertemplate.Models.Dtos.*;
 import com.yuosef.springbootstartertemplate.Services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.SystemException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Authentication", description = "Register, Login, Refresh Token, Logout")
 public class Controller {
 
     private final UserService userService;
@@ -19,6 +22,7 @@ public class Controller {
         this.userService = userService;
     }
 
+    @Operation(summary = "Register a new user")
     @PostMapping("/createUser")
     public ResponseEntity<ApiResponse<UserDto>> createUser(@Valid @RequestBody UserAccountInfo userAccountInfo) throws SystemException {
          UserDto user= userService.createUser(userAccountInfo);

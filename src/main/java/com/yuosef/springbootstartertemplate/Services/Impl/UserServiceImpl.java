@@ -11,13 +11,11 @@ import com.yuosef.springbootstartertemplate.Models.User;
 import com.yuosef.springbootstartertemplate.Services.UserService;
 import jakarta.transaction.SystemException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -73,16 +71,16 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public AuthResponse refreshToken(RefreshTokenRequest request) {
-        // 1. verify the refresh token is valid and not expired
+        // verify the refresh token is valid and not expired
         RefreshToken refreshToken = refreshTokenService.verifyRefreshToken(request.refreshToken());
 
-        // 2. get the user from the refresh token
+        // get the user from the refresh token
         User user = refreshToken.getUser();
 
-        // 3. generate a new access token
+        // generate a new access token
         String newAccessToken = tokenHandler.createToken(user);
 
-        // 4. return new access token + same refresh token
+        // return new access token and same refresh token
         return new AuthResponse(newAccessToken, refreshToken.getToken());
     }
     @Override

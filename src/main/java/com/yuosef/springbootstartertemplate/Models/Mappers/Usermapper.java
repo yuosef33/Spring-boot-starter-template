@@ -11,7 +11,8 @@ public class Usermapper {
             user.getEmail(),
             user.getMobileNumber(),
             user.getPwd(),
-            user.getCreateDt(),
+            user.getCreatedAt(),
+            user.getUpdatedAt(),
             user.getRoles());
    };
     public static User toEntity(UserDto userDto){
@@ -20,7 +21,6 @@ public class Usermapper {
                userDto.getEmail(),
                userDto.getMobileNumber(),
                userDto.getPwd(),
-               userDto.getCreateDt(),
                userDto.getAuthorities());
    };
 

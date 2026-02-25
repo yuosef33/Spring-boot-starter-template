@@ -59,7 +59,6 @@ public class UserServiceImpl implements UserService {
                 .email(userAccInfo.email())
                 .mobileNumber(userAccInfo.phoneNumber())
                 .pwd(passwordEncoder.encode(userAccInfo.password()))
-                .createDt(new Date(System.currentTimeMillis()))
                 .authorities(auths).build();
         return Usermapper.toDto(userDao.save(user2));
     }

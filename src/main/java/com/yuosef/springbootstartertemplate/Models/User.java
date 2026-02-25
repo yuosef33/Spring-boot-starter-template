@@ -1,6 +1,5 @@
 package com.yuosef.springbootstartertemplate.Models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,7 +8,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +18,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Builder
 @Table(name = "users")
-public class User implements UserDetails {
+public class User extends AuditingBase implements UserDetails  {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long Id;
@@ -35,10 +34,6 @@ public class User implements UserDetails {
     @Column(name = "password")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String pwd;
-
-    @Column(name = "create_dt")
-    @JsonIgnore
-    private Date createDt;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

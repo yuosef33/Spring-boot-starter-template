@@ -1,10 +1,8 @@
 package com.yuosef.springbootstartertemplate.Config;
 
-
 import com.yuosef.springbootstartertemplate.Config.Bucket4J.RateLimitFilter;
 import com.yuosef.springbootstartertemplate.Config.JWT.TokenFilter;
 import com.yuosef.springbootstartertemplate.Daos.UserDao;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,25 +28,28 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-@Profile("dev")
-public class SecurityConfig {
+@Profile("prod")
+public class SecurityConfigProd {
 
     private final UserDao userRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, TokenFilter tokenFilter, RateLimitFilter rateLimitFilter) throws Exception{
 
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        http    .sessionManagement(session
+                        -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration corsConfiguration = new CorsConfiguration();
-                    corsConfiguration.setAllowedOriginPatterns(List.of("*"));
-                    corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
+                    corsConfiguration.setAllowedOriginPatterns(List.of("http://localhost:3000"));
+                    corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
                     corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
                     corsConfiguration.setExposedHeaders(Arrays.asList("Authorization"));
                     corsConfiguration.setAllowCredentials(true);
                     corsConfiguration.setMaxAge(3600L);
                     return corsConfiguration;
                 }))
+
                 .authorizeHttpRequests(
                         (request)  -> request
                                 .requestMatchers("/auth/**").permitAll()
@@ -63,8 +63,17 @@ public class SecurityConfig {
                                 .anyRequest().authenticated()
 
                 ).headers(headers -> headers
-                        .frameOptions(frame -> frame.disable())
-                ).csrf(csrf -> csrf.disable());
+                        .frameOptions(frame
+                                -> frame.deny()).httpStrictTransportSecurity(hsts
+                                -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000))
+                        .contentSecurityPolicy(csp
+                                -> csp.policyDirectives("default-src 'self'")
+                        )
+                )
+                .csrf(csrf -> csrf.disable())
+                .authenticationProvider(authenticationProvider());
+
+
         http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(rateLimitFilter, TokenFilter.class);
         return http.build();

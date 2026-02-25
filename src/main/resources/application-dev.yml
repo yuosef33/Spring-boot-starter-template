@@ -27,8 +27,8 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
+            client-id: ${GOOGLE_CLIENT_ID:your-google-client-id}
+            client-secret: ${GOOGLE_CLIENT_SECRET:your-google-client-secret}
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope:
               - email
@@ -41,7 +41,7 @@ logging:
 application:
   security:
     jwt:
-      secret-key:  ${JWT_SECRET_KEY}
+      secret-key:  ${JWT_SECRET_KEY:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
       expiration: 1d
       refresh-expiration: 604800000 # refresh token — 7 days
   oauth2:

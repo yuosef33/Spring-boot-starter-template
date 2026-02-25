@@ -6,9 +6,9 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.11</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/> 
     </parent>
-    <groupId>com.yuosef.demo1</groupId>
+    <groupId>com.yuosef.springbootstartertemplate</groupId>
     <artifactId>spring-boot-starter-template</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>spring-boot-starter-template</name>

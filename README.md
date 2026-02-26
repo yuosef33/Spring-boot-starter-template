@@ -88,6 +88,11 @@ For Windows (PowerShell):
 mvnw.cmd spring-boot:run
 ```
 
+Postman collection link 
+```
+https://www.postman.com/me4444-5137/spring-boot-starter-template/collection/39139361-bd03fc7a-8e53-460b-8df5-59f0e22e061b?action=share&source=copy-link&creator=39139361
+```
+
 ---
 
 ## ✨ Core Features

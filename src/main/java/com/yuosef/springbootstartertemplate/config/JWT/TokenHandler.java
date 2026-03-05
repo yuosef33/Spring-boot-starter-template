@@ -2,6 +2,7 @@ package com.yuosef.springbootstartertemplate.config.JWT;
 
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -42,11 +43,19 @@ public class TokenHandler {
                       .claim("roles",user.getAuthorities()).compact();
        }
 
-
+    public String getSubject(String token) {
+        Claims claims = extractAllClaims(token);
+        if (claims == null) return null;
+        return claims.getSubject();
+    }
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
             String email = extractEmail(token);
             return email.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        }  catch (ExpiredJwtException e) {
+            // token expired expected behavior
+            log.warn("JWT token expired: {}", e.getMessage());
+            return false;
         } catch (Exception e) {
             log.error("JWT validation error: {}", e.getMessage());
             return false;
@@ -55,23 +64,31 @@ public class TokenHandler {
 
 
     private boolean isTokenExpired(String token) {
-        return extractAllClaims(token).getExpiration().before(new Date());
+        Claims claims = extractAllClaims(token);
+        if (claims == null) return true;
+        return claims.getExpiration().before(new Date());
     }
 
     public String extractEmail(String token) {
-            return extractAllClaims(token).getSubject();
-        }
-
-        public String getSubject(String token){
-            return extractAllClaims(token).getSubject();
-        }
-
+        Claims claims = extractAllClaims(token);
+        if (claims == null) return null;
+        return claims.getSubject();
+    }
         private Claims extractAllClaims(String token) {
+        try {
             return Jwts.parser()
                     .verifyWith(key)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
+        }catch (ExpiredJwtException e) {
+            // token expired expected behavior
+            log.warn("JWT token expired: {}", e.getMessage());
+            return null;
+        } catch (Exception e) {
+            log.error("JWT validation error: {}", e.getMessage());
+            return null;
+        }
         }
 
 

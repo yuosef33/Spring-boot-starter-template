@@ -21,6 +21,8 @@ public class TokenFilter extends OncePerRequestFilter {
 
     private final TokenHandler tokenHandler;
     private final UserService userService;
+    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
+
 
     private static final List<String> EXACT_PUBLIC_PATHS = List.of(
             "/auth/signup",
@@ -40,13 +42,14 @@ public class TokenFilter extends OncePerRequestFilter {
             "/login/oauth2"
     );
 
-    public TokenFilter(TokenHandler tokenHandler, UserService userService) {
+    public TokenFilter(TokenHandler tokenHandler, UserService userService, JwtAuthenticationEntryPoint authenticationEntryPoint) {
         this.tokenHandler = tokenHandler;
         this.userService = userService;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    protected boolean shouldNotFilter(HttpServletRequest request)  {
         String path = request.getServletPath();
         return EXACT_PUBLIC_PATHS.contains(path) ||
                 PREFIX_PUBLIC_PATHS.stream().anyMatch(path::startsWith);
@@ -57,7 +60,8 @@ public class TokenFilter extends OncePerRequestFilter {
         String token=request.getHeader("Authorization");
         if ( token ==null||!token.startsWith("Bearer")){
             response.reset();
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            authenticationEntryPoint.commence(request, response,
+                    new org.springframework.security.core.AuthenticationException("Invalid token") {});
             return;
         }
         token=token.substring(7);
@@ -83,7 +87,8 @@ public class TokenFilter extends OncePerRequestFilter {
                 throw new RuntimeException(e);
             }
         } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            authenticationEntryPoint.commence(request, response,
+                    new org.springframework.security.core.AuthenticationException("Invalid token") {});
             return;
         }
 

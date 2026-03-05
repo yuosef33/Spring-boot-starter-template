@@ -2,6 +2,7 @@ package com.yuosef.springbootstartertemplate.config;
 
 
 import com.yuosef.springbootstartertemplate.config.Bucket4J.RateLimitFilter;
+import com.yuosef.springbootstartertemplate.config.JWT.JwtAuthenticationEntryPoint;
 import com.yuosef.springbootstartertemplate.config.JWT.TokenFilter;
 import com.yuosef.springbootstartertemplate.repository.UserDao;
 import com.yuosef.springbootstartertemplate.services.Impl.OAuth2UserService;
@@ -34,6 +35,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final UserDao userRepository;
+    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, TokenFilter tokenFilter, RateLimitFilter rateLimitFilter, OAuth2SuccessHandler oAuth2SuccessHandler, OAuth2UserService oAuth2UserService) throws Exception{
@@ -49,6 +51,9 @@ public class SecurityConfig {
                     corsConfiguration.setMaxAge(3600L);
                     return corsConfiguration;
                 }))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                )
                 .authorizeHttpRequests(
                         (request)  -> request
                                 .requestMatchers("/auth/**").permitAll()

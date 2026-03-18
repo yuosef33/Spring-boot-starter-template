@@ -45,6 +45,7 @@ public class User extends AuditingBase implements UserDetails  {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private AuthProvider authProvider = AuthProvider.LOCAL;
 
 

@@ -38,7 +38,7 @@ public class TokenFilter extends OncePerRequestFilter {
             "/v3/api-docs",
             "/h2-console",
             "/actuator",
-            "/oauth2",        // ← add this
+            "/oauth2",
             "/login/oauth2"
     );
 
